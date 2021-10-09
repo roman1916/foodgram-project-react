@@ -1,8 +1,7 @@
-from django.urls import path, include
+from django.urls import include, path
 from djoser import views
 
 from users.views import FollowApiView, ListFollowViewSet
-
 
 urlpatterns = [
     path('users/<int:id>/subscribe/', FollowApiView.as_view(),

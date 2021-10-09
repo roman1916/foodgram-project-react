@@ -1,14 +1,11 @@
 from django.contrib.auth import get_user_model
-from rest_framework.serializers import (
-    ModelSerializer,
-    SerializerMethodField,
-    PrimaryKeyRelatedField,
-    ValidationError
-)
 from djoser.serializers import UserCreateSerializer, UserSerializer
+from recipes.models import Recipe
+from rest_framework.serializers import (ModelSerializer,
+                                        PrimaryKeyRelatedField,
+                                        SerializerMethodField, ValidationError)
 
 from .models import Follow
-from recipes.models import Recipe
 
 User = get_user_model()
 

@@ -1,45 +1,21 @@
 from django.contrib.auth import get_user_model
-from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import (
-    mixins,
-    permissions,
-    viewsets,
-    status
-)
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .pagination import CustomPageNumberPaginator
-
 from .filters import IngredientsFilter, RecipeFilter
-from .models import (
-    Ingredient,
-    RecipeIngredients,
-    Tag,
-    Recipe,
-    Favorite,
-    ShoppingList
-)
-from .serializers import (
-    IngredientsSerializer,
-    TagsSerializer,
-    ShowRecipeFullSerializer,
-    AddRecipeSerializer,
-    FavouriteSerializer,
-    ShoppingListSerializer
-)
+from .mixins import RetriveAndListViewSet
+from .models import Favorite, Ingredient, Recipe, ShoppingList, Tag
+from .pagination import CustomPageNumberPaginator
 from .permissions import IsAuthorOrAdmin
+from .serializers import (AddRecipeSerializer, FavouriteSerializer,
+                          IngredientsSerializer, ShoppingListSerializer,
+                          ShowRecipeFullSerializer, TagsSerializer)
+from .utils import download_file_response, get_ingredients_list
 
 User = get_user_model()
-
-
-class RetriveAndListViewSet(
-        mixins.ListModelMixin,
-        mixins.RetrieveModelMixin,
-        viewsets.GenericViewSet):
-    pass
 
 
 class IngredientsViewSet(RetriveAndListViewSet):
@@ -111,31 +87,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user_shopping_list = request.user.shopping_list.all()
         to_buy = get_ingredients_list(user_shopping_list)
         return download_file_response(to_buy, 'to_buy.txt')
-
-
-def get_ingredients_list(recipes_list):
-    ingredients_dict = {}
-    for recipe in recipes_list:
-        ingredients = RecipeIngredients.objects.filter(recipe=recipe.recipe)
-        for ingredient in ingredients:
-            amount = ingredient.amount
-            name = ingredient.ingredient.name
-            measurement_unit = ingredient.ingredient.measurement_unit
-            if name not in ingredients_dict:
-                ingredients_dict[name] = {
-                    'measurement_unit': measurement_unit,
-                    'amount': amount
-                }
-            else:
-                ingredients_dict[name]['amount'] += amount
-    to_buy = []
-    for item in ingredients_dict:
-        to_buy.append(f'{item} - {ingredients_dict[item]["amount"]} '
-                      f'{ingredients_dict[item]["measurement_unit"]} \n')
-    return to_buy
-
-
-def download_file_response(list_to_download, filename):
-    response = HttpResponse(list_to_download, 'Content-Type: text/plain')
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
-    return response

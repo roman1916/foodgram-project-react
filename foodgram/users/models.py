@@ -1,12 +1,6 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import (
-    CharField,
-    EmailField,
-    UniqueConstraint,
-    ForeignKey,
-    Model,
-    CASCADE
-)
+from django.db.models import (CASCADE, CharField, EmailField, ForeignKey,
+                              Model, UniqueConstraint)
 
 
 class User(AbstractUser):

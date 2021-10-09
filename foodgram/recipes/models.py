@@ -1,17 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
-from django.db.models import (
-    Model,
-    CharField,
-    ForeignKey,
-    ManyToManyField,
-    TextField,
-    PositiveIntegerField,
-    ImageField,
-    UniqueConstraint,
-    PROTECT,
-    CASCADE
-)
+from django.db.models import (CASCADE, PROTECT, CharField, ForeignKey,
+                              ImageField, ManyToManyField, Model,
+                              PositiveIntegerField, TextField,
+                              UniqueConstraint)
 
 User = get_user_model()
 
@@ -91,15 +83,20 @@ class Recipe(Model):
     )
     tags = ManyToManyField(
         Tag,
-        through='RecipeTags'
+        through='RecipeTag'
     )
     ingredients = ManyToManyField(
         Ingredient,
-        through='RecipeIngredients'
+        through='RecipeIngredient'
     )
     cooking_time = PositiveIntegerField(
         verbose_name='Время готовки',
-        validators=[MinValueValidator(1)]
+        validators=[
+            MinValueValidator(
+                1,
+                'Время готовки не может быть нулем!'
+            )
+        ]
     )
     image = ImageField(
         verbose_name='Картинка',
@@ -115,7 +112,7 @@ class Recipe(Model):
         return self.name
 
 
-class RecipeIngredients(Model):
+class RecipeIngredient(Model):
     recipe = ForeignKey(
         Recipe,
         on_delete=CASCADE
@@ -138,7 +135,7 @@ class RecipeIngredients(Model):
         return 'Ингридиент в рецепте'
 
 
-class RecipeTags(Model):
+class RecipeTag(Model):
     recipe = ForeignKey(
         Recipe,
         on_delete=CASCADE
