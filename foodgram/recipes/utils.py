@@ -6,7 +6,7 @@ from .models import RecipeIngredient
 def get_ingredients_list(recipes_list):
     ingredients_dict = {}
     for recipe in recipes_list:
-        ingredients = RecipeIngredient.objects.values_list('recipe')
+        ingredients = RecipeIngredient.objects.filter(recipe=recipe.recipe)
         amount = ingredients.amount
         name = ingredients.ingredient.name
         measurement_unit = ingredients.ingredient.measurement_unit
