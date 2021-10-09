@@ -3,17 +3,13 @@ from django.http.response import HttpResponse
 from .models import RecipeIngredient
 
 
-def get_ingredients_list(request):
+def get_ingredients_list(recipes_list):
     ingredients_dict = {}
-    ingredients = RecipeIngredient.objects.values(
-        'amount',
-        'ingredient__name',
-        'ingredient__measurement_unit'
-    )
-    for ingredient in ingredients:
-        amount = ingredient['amount']
-        name = ingredient['ingredient__name']
-        measurement_unit = ingredient['ingredient__measurement_unit']
+    for recipe in recipes_list:
+        ingredients = RecipeIngredient.objects.values_list('recipe')
+        amount = ingredients.amount
+        name = ingredients.ingredient.name
+        measurement_unit = ingredients.ingredient.measurement_unit
         if name not in ingredients_dict:
             ingredients_dict[name] = {
                 'measurement_unit': measurement_unit,
