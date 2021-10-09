@@ -6,10 +6,10 @@ from .models import RecipeIngredient
 def get_ingredients_list(recipes_list):
     ingredients_dict = {}
     for recipe in recipes_list:
-        ingredients = RecipeIngredient.objects.filter(recipe=recipe.recipe)
-        amount = ingredients.amount
-        name = ingredients.ingredient.name
-        measurement_unit = ingredients.ingredient.measurement_unit
+        ingredient = RecipeIngredient.objects.filter(recipe=recipe.recipe)
+        amount = ingredient.amount
+        name = ingredient.ingredient.name
+        measurement_unit = ingredient.ingredient.measurement_unit
         if name not in ingredients_dict:
             ingredients_dict[name] = {
                 'measurement_unit': measurement_unit,
