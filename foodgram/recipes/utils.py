@@ -5,22 +5,17 @@ from .models import RecipeIngredient
 
 def get_ingredients_list(recipe_list):
     ingredients_dict = {}
-    for recipe in recipe_list:
-        ingredient = RecipeIngredient.objects.filter(
-            recipe=recipe.recipe).values_list(
-                'ingredient__name',
-                'amount',
-                'ingredient__measurement_unit')
+    for ingredient in recipe_list:
         amount = ingredient.amount
         name = ingredient.ingredient__name
         measurement_unit = ingredient.ingredient__measurement_unit
-        if name not in ingredients_dict:
-            ingredients_dict[name] = {
-                'measurement_unit': measurement_unit,
-                'amount': amount
-            }
-        else:
-            ingredients_dict[name]['amount'] += amount
+    if name not in ingredients_dict:
+        ingredients_dict[name] = {
+            'measurement_unit': measurement_unit,
+            'amount': amount
+        }
+    else:
+        ingredients_dict[name]['amount'] += amount
     to_buy = []
     for item in ingredients_dict:
         to_buy.append(f'{item} - {ingredients_dict[item]["amount"]} '
