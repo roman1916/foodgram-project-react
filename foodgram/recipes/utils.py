@@ -1,7 +1,5 @@
 from django.http.response import HttpResponse
 
-from .models import RecipeIngredient
-
 
 def get_ingredients_list(recipe_list):
     ingredients_dict = {}
