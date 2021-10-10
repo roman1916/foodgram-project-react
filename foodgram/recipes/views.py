@@ -84,8 +84,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
-        recip = request.user.shopping_cart.recipes.all().values_list('ingredient__name',
-                                                                     'amount',
-                                                                     'ingredient__measurement_unit')
+        recip = request.user.shopping_cart.recipes.all().values_list(
+            'ingredient__name',
+            'amount',
+            'ingredient__measurement_unit'
+        )
         to_buy = get_ingredients_list(recip)
         return download_file_response(to_buy, 'to_buy.txt')
