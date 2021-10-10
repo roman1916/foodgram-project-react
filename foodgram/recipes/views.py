@@ -120,7 +120,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         pdf.setFillColor(colors.black)
         pdf.setFont('Neocyr', 16)
         height = 700
-        for name, data in shopping_list.items():
+        for name, data in shopping_list1.items():
             pdf.drawString(
                 60,
                 height,
