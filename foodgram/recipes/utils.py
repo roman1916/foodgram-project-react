@@ -25,7 +25,7 @@ def get_ingredients_list(recipes_list):
         to_buy = []
         for item in ingredients_dict:
             to_buy.append(f'{item} - {ingredients_dict[item]["amount"]} '
-                      f'{ingredients_dict[item]["measurement_unit"]} \n')
+                          f'{ingredients_dict[item]["measurement_unit"]} \n')
         return to_buy
 
 
