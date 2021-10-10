@@ -83,10 +83,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
-    def download_shopping_cart(self, request, pk):
-        user = request.user
-        recipe = get_object_or_404(Recipe, id=pk)
-        shopping_list = get_object_or_404(ShoppingList,
-                                          user=user, recipe=recipe)
-        to_buy = get_ingredients_list(shopping_list)
+    def download_shopping_cart(self, request):
+        user_shopping_list = request.user.shopping_list.all()
+        to_buy = get_ingredients_list(user_shopping_list)
         return download_file_response(to_buy, 'to_buy.txt')
