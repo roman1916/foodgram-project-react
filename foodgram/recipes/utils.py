@@ -4,14 +4,12 @@ from .models import RecipeIngredient
 
 
 def get_ingredients_list(request):
-    recipe = request.recipe
     ingredients_dict = {}
-    ingredients = RecipeIngredient.objects.filter(
-        recipe=recipe).values_list(
-            'ingredient__name',
-            'amount',
-            'ingredient__measurement_unit',
-            named=True)
+    ingredients = RecipeIngredient.objects.values_list(
+        'ingredient__name',
+        'amount',
+        'ingredient__measurement_unit',
+        named=True)
     for ingredient in ingredients:
         amount = ingredient.amount
         name = ingredient.ingredient__name
