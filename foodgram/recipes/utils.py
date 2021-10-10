@@ -4,10 +4,10 @@ from .models import RecipeIngredient
 
 
 def get_ingredients_list(request):
-    user = request.user
+    recipe = request.recipe
     ingredients_dict = {}
     ingredients = RecipeIngredient.objects.filter(
-        recipe__cart__user=user).values_list(
+        recipe=recipe).values_list(
             'ingredient__name',
             'amount',
             'ingredient__measurement_unit',
