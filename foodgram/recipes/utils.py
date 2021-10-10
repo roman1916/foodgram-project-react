@@ -5,12 +5,12 @@ from .models import RecipeIngredient
 
 def get_ingredients_list(recipes_list):
     ingredients_dict = {}
-    for recipe in recipes_list:
-        ingredient = RecipeIngredient.objects.filter(
-            recipe=recipe).values_list(
-                'ingredient__name',
-                'amount',
-                'ingredient__measurement_unit')
+    ingredients = RecipeIngredient.objects.filter(
+        recipe=recipes_list).values_list(
+            'ingredient__name',
+            'amount',
+            'ingredient__measurement_unit')
+    for ingredient in ingredients:
         amount = ingredient.amount
         name = ingredient.ingredient.name
         measurement_unit = ingredient.ingredient.measurement_unit
