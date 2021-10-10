@@ -8,9 +8,9 @@ def get_ingredients_list(shopping_list):
     ingredients = RecipeIngredient.objects.filter(
         recipe=shopping_list.recipe).values_list(
             'ingredient__name',
-                'amount',
-                'ingredient__measurement_unit',
-                named=True)
+            'amount',
+            'ingredient__measurement_unit',
+            named=True)
     for ingredient in ingredients:
         amount = ingredient.amount
         name = ingredient.ingredient.name
