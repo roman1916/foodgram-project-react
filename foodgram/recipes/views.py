@@ -4,13 +4,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.http.response import HttpResponse
-from .models import RecipeIngredient
-from reportlab.lib import colors
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfgen import canvas
-
 
 from .filters import IngredientsFilter, RecipeFilter
 from .mixins import RetriveAndListViewSet
@@ -20,6 +13,7 @@ from .permissions import IsAuthorOrAdmin
 from .serializers import (AddRecipeSerializer, FavouriteSerializer,
                           IngredientsSerializer, ShoppingListSerializer,
                           ShowRecipeFullSerializer, TagsSerializer)
+from .utils import download_file_response, get_ingredients_list
 
 User = get_user_model()
 
@@ -90,48 +84,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
-        user = request.user
-        ingredients_dict = {}
-        ingredients = RecipeIngredient.objects.filter(
-            recipe__cart__user=user).values_list(
-                'ingredient__name',
-                'amount',
-                'ingredient__measurement_unit',
-                named=True)
-        for ingredient in ingredients:
-            amount = ingredient.amount
-            name = ingredient.ingredient__name
-            measurement_unit = ingredient.ingredient__measurement_unit
-            if name not in ingredients_dict:
-                ingredients_dict[name] = {
-                    'measurement_unit': measurement_unit,
-                    'amount': amount
-                }
-            else:
-                ingredients_dict[name]['amount'] += amount
-        file_name = 'ingredients_dict'
-        response = HttpResponse(content_type='application/pdf')
-        content_disposition = f'attachment; filename="{file_name}.pdf"'
-        response['Content-Disposition'] = content_disposition
-        pdfmetrics.registerFont(TTFont('Neocyr', 'Neocyr.ttf', 'UTF-8'))
-        pdf = canvas.Canvas(response)
-        pdf.setFont('Neocyr', 24)
-        pdf.setFillColor(colors.black)
-        pdf.drawCentredString(300, 770, 'Список покупок')
-        pdf.setFillColor(colors.black)
-        pdf.setFont('Neocyr', 16)
-        height = 700
-        for name, data in ingredients_dict.items():
-            pdf.drawString(
-                60,
-                height,
-                f"{name} - {data['amount']} {data['measurement_unit']}"
-            )
-            height -= 25
-            if height == 50:
-                pdf.showPage()
-                pdf.setFont('Neocyr', 16)
-                height = 700
-        pdf.showPage()
-        pdf.save()
-        return response
+        user_shopping_list = request.user.shopping_list.all()
+        to_buy = get_ingredients_list(user_shopping_list)
+        return download_file_response(to_buy, 'to_buy.txt')
