@@ -6,6 +6,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.http.response import HttpResponse
 from .models import RecipeIngredient
+from reportlab.lib import colors
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
 
 
 from .filters import IngredientsFilter, RecipeFilter
@@ -105,12 +109,29 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 }
             else:
                 ingredients_dict[name]['amount'] += amount
-        to_buy = []
-        for item in ingredients_dict:
-            to_buy.append(f'{item} - {ingredients_dict[item]["amount"]} '
-                          f'{ingredients_dict[item]["measurement_unit"]} \n')
-        res = to_buy
-        response = HttpResponse(res, 'Content-Type: text/plain')
-        response(f"['Content-Disposition'] ="
-                 f'attachment; filename="{to_buy.txt}"')
+        file_name = 'ingredients_dict'
+        response = HttpResponse(content_type='application/pdf')
+        content_disposition = f'attachment; filename="{file_name}.pdf"'
+        response['Content-Disposition'] = content_disposition
+        pdfmetrics.registerFont(TTFont('Neocyr', 'Neocyr.ttf', 'UTF-8'))
+        pdf = canvas.Canvas(response)
+        pdf.setFont('Neocyr', 24)
+        pdf.setFillColor(colors.black)
+        pdf.drawCentredString(300, 770, 'Список покупок')
+        pdf.setFillColor(colors.black)
+        pdf.setFont('Neocyr', 16)
+        height = 700
+        for name, data in ingredients_dict.items():
+            pdf.drawString(
+                60,
+                height,
+                f"{name} - {data['amount']} {data['measurement_unit']}"
+            )
+            height -= 25
+            if height == 50:
+                pdf.showPage()
+                pdf.setFont('Neocyr', 16)
+                height = 700
+        pdf.showPage()
+        pdf.save()
         return response
