@@ -12,16 +12,16 @@ def get_ingredients_list(recipes_list):
                 'amount',
                 'ingredient__measurement_unit',
                 named=True)
-                amount = ingredient.amount
-                name = ingredient.ingredient.name
-                measurement_unit = ingredient.ingredient.measurement_unit
-                if name not in ingredients_dict:
-                    ingredients_dict[name] = {
-                        'measurement_unit': measurement_unit,
-                        'amount': amount
-                    }
-                else:
-                    ingredients_dict[name]['amount'] += amount
+        amount = ingredient.amount
+        name = ingredient.ingredient.name
+        measurement_unit = ingredient.ingredient.measurement_unit
+        if name not in ingredients_dict:
+            ingredients_dict[name] = {
+                'measurement_unit': measurement_unit,
+                'amount': amount
+            }
+        else:
+            ingredients_dict[name]['amount'] += amount
         to_buy = []
         for item in ingredients_dict:
             to_buy.append(f'{item} - {ingredients_dict[item]["amount"]} '
