@@ -1,6 +1,6 @@
 from django.http.response import HttpResponse
 
-from foodgram.recipes.models import RecipeIngredient
+from .models import RecipeIngredient
 
 
 def get_ingredients_list(shopping_list):
