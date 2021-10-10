@@ -13,7 +13,7 @@ from reportlab.pdfgen import canvas
 
 from .filters import IngredientsFilter, RecipeFilter
 from .mixins import RetriveAndListViewSet
-from .models import Favorite, Ingredient, Recipe, RecipeIngredient, ShoppingList, Tag
+from .models import Favorite, Ingredient, Recipe, RecipeIngredient, Tag
 from .pagination import CustomPageNumberPaginator
 from .permissions import IsAuthorOrAdmin
 from .serializers import (AddRecipeSerializer, FavouriteSerializer,
