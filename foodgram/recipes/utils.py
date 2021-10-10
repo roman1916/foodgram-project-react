@@ -7,7 +7,7 @@ def get_ingredients_list(recipe_list):
     ingredients_dict = {}
     for recipe in recipe_list:
         ingredient = RecipeIngredient.objects.filter(
-            recipe=recipe).values_list(
+            recipe=recipe.recipe).values_list(
                 'ingredient__name',
                 'amount',
                 'ingredient__measurement_unit')
