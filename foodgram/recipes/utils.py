@@ -3,10 +3,14 @@ from django.http.response import HttpResponse
 from .models import RecipeIngredient
 
 
-def get_ingredients_list(recipes_list):
+def get_ingredients_list(recipe_list):
     ingredients_dict = {}
-    ingredients = RecipeIngredient.objects.values_list('recipe', flat=True)
-    for ingredient in ingredients:
+    for recipe in recipe_list:
+        ingredient = RecipeIngredient.objects.values(
+        'amount',
+        'ingredient__name',
+        'ingredient__measurement_unit'
+    ).order_by(recipe('id'))
         amount = ingredient['amount']
         name = ingredient['ingredient__name']
         measurement_unit = ingredient['ingredient__measurement_unit']
