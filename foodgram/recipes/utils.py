@@ -10,8 +10,7 @@ def get_ingredients_list(recipes_list):
             recipe=recipe.recipe).values_list(
                 'ingredient__name',
                 'amount',
-                'ingredient__measurement_unit',
-            )
+                'ingredient__measurement_unit')
         amount = ingredient.amount
         name = ingredient.ingredient.name
         measurement_unit = ingredient.ingredient.measurement_unit
