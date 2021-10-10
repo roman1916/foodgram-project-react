@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from .filters import IngredientsFilter, RecipeFilter
 from .mixins import RetriveAndListViewSet
-from .models import Favorite, Ingredient, Recipe, ShoppingList, Tag
+from .models import Favorite, Ingredient, Recipe, RecipeIngredient, ShoppingList, Tag
 from .pagination import CustomPageNumberPaginator
 from .permissions import IsAuthorOrAdmin
 from .serializers import (AddRecipeSerializer, FavouriteSerializer,
@@ -84,6 +84,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
-        user_shopping_list = request.user.shopping_list.all()
-        to_buy = get_ingredients_list(user_shopping_list)
+        recipe = RecipeIngredient.objects.filter(user=request.user)
+        to_buy = get_ingredients_list(recipe)
         return download_file_response(to_buy, 'to_buy.txt')
