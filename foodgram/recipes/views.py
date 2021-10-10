@@ -89,10 +89,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
-        user = request.user
-        shopping_list = {}
+        recipe = request.user.shopping_list.all()
+        shopping_list1 = {}
         ingredients = RecipeIngredient.objects.filter(
-            recipe__cart__user=user).values_list(
+            recipe=recipe).values_list(
                 'ingredient__name',
                 'amount',
                 'ingredient__measurement_unit',
@@ -101,14 +101,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
             name = ingredient.ingredient__name
             measurement_unit = ingredient.ingredient__measurement_unit
             amount = ingredient.amount
-            if name not in shopping_list:
-                shopping_list[name] = {
+            if name not in shopping_list1:
+                shopping_list1[name] = {
                     'measurement_unit': measurement_unit,
                     'amount': amount
                 }
             else:
-                shopping_list[name]['amount'] += amount
-        file_name = 'ShoppingList'
+                shopping_list1[name]['amount'] += amount
+        file_name = 'ShoppingList1'
         response = HttpResponse(content_type='application/pdf')
         content_disposition = f'attachment; filename="{file_name}.pdf"'
         response['Content-Disposition'] = content_disposition
