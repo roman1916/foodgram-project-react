@@ -7,7 +7,7 @@ def get_ingredients_list(request):
     ingredients_dict = {}
     user = request.user
     ingredients = RecipeIngredient.objects.filter(
-        shoppinglist__user=user).values_list(
+        recipe__shoppinglist__user=user).values_list(
             'ingredient__name',
             'amount',
             'ingredient__measurement_unit',
