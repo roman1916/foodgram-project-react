@@ -111,5 +111,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                           f'{ingredients_dict[item]["measurement_unit"]} \n')
         res = to_buy
         response = HttpResponse(res, 'Content-Type: text/plain')
-        response['Content-Disposition'] = f'attachment; filename="{to_buy.txt}"'
+        response(f"['Content-Disposition'] ="
+                 f'attachment; filename="{to_buy.txt}"')
         return response
