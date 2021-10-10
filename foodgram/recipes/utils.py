@@ -7,11 +7,11 @@ def get_ingredients_list(request):
     user = request.user
     ingredients_dict = {}
     ingredients = RecipeIngredient.objects.filter(
-            recipe__cart__user=user).values_list(
-                'ingredient__name',
-                'amount',
-                'ingredient__measurement_unit',
-                named=True)
+        recipe__cart__user=user).values_list(
+            'ingredient__name',
+            'amount',
+            'ingredient__measurement_unit',
+            named=True)
     for ingredient in ingredients:
         amount = ingredient.amount
         name = ingredient.ingredient__name
