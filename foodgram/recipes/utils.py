@@ -9,8 +9,7 @@ def get_ingredients_list(recipe_list):
         ingredient = RecipeIngredient.objects.values(
         'amount',
         'ingredient__name',
-        'ingredient__measurement_unit'
-    ).order_by(recipe('id'))
+        'ingredient__measurement_unit').order_by(recipe('id'))
         amount = ingredient['amount']
         name = ingredient['ingredient__name']
         measurement_unit = ingredient['ingredient__measurement_unit']
