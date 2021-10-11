@@ -116,11 +116,13 @@ class Recipe(Model):
 class RecipeIngredient(Model):
     recipe = ForeignKey(
         Recipe,
-        on_delete=CASCADE
+        on_delete=CASCADE,
+        related_name='recipes_list'
     )
     ingredient = ForeignKey(
         Ingredient,
         on_delete=CASCADE,
+        related_name='ingredients_list',
         verbose_name='Ингридиент'
     )
     amount = PositiveIntegerField(

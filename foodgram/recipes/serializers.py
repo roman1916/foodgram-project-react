@@ -56,7 +56,8 @@ class ShowRecipeFullSerializer(ModelSerializer):
                   'is_in_shopping_cart')
 
     def get_ingredients(self, obj):
-        ingredients = RecipeIngredient.objects.filter(recipe=obj)
+        recipe = obj
+        ingredients = recipe.ingredients_list.all()
         return ShowRecipeIngredientsSerializer(ingredients, many=True).data
 
     def get_is_favorited(self, obj):
