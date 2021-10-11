@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
@@ -7,13 +8,13 @@ from rest_framework.response import Response
 
 from .filters import IngredientsFilter, RecipeFilter
 from .mixins import RetriveAndListViewSet
-from .models import Favorite, Ingredient, Recipe, ShoppingList, Tag
+from .models import (Favorite, Ingredient, Recipe,
+                     ShoppingList, Tag, RecipeIngredient)
 from .pagination import CustomPageNumberPaginator
 from .permissions import IsAuthorOrAdmin
 from .serializers import (AddRecipeSerializer, FavouriteSerializer,
                           IngredientsSerializer, ShoppingListSerializer,
                           ShowRecipeFullSerializer, TagsSerializer)
-from .utils import download_file_response, get_ingredients_list
 
 User = get_user_model()
 
@@ -84,5 +85,28 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
-        to_buy = get_ingredients_list(request)
-        return download_file_response(to_buy, 'to_buy.txt')
+        ingredients_dict = {}
+        ingredients = RecipeIngredient.objects.filter(
+            recipe__purchases_user=request.user).values_list(
+                'ingredient__name',
+                'ingredient__measurement_unit',
+                'amount')
+        for ingredient in ingredients:
+            amount = ingredient.amount
+            name = ingredient.ingredient.name
+            measurement_unit = ingredient.ingredient.measurement_unit
+            if name not in ingredients_dict:
+                ingredients_dict[name] = {
+                    'measurement_unit': measurement_unit,
+                    'amount': amount
+                }
+            else:
+                ingredients_dict[name]['amount'] += amount
+        to_buy = []
+        for item in ingredients_dict:
+            to_buy.append(f'{item} - {ingredients_dict[item]["amount"]} '
+                          f'{ingredients_dict[item]["measurement_unit"]} \n')
+
+        response = HttpResponse(to_buy, 'Content-Type: text/plain')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
