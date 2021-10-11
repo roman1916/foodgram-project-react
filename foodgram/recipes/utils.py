@@ -1,9 +1,9 @@
 from django.http.response import HttpResponse
 
 
-def get_ingredients_list(request):
+def get_ingredients_list(recipes_list):
     ingredients_dict = {}
-    for ingredient in request:
+    for ingredient in recipes_list.recipe.ingredient:
         amount = ingredient.amount
         name = ingredient.ingredient.name
         measurement_unit = ingredient.ingredient.measurement_unit
