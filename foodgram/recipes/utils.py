@@ -1,17 +1,9 @@
 from django.http.response import HttpResponse
 
-from .models import RecipeIngredient
-
 
 def get_ingredients_list(request):
-    user = request.user
     ingredients_dict = {}
-    ingredients = RecipeIngredient.objects.filter(
-        recipe__shoppinglist__user=user).values_list(
-            'ingredient__name',
-            'ingredient__measurement_unit',
-            'amount')
-    for ingredient in ingredients:
+    for ingredient in request:
         amount = ingredient.amount
         name = ingredient.ingredient.name
         measurement_unit = ingredient.ingredient.measurement_unit
