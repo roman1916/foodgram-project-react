@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
-from django.db.models import (CASCADE, PROTECT, CharField, ForeignKey,
+from django.db.models import (CASCADE, CharField, ForeignKey,
                               ImageField, ManyToManyField, Model,
                               PositiveIntegerField, TextField,
                               UniqueConstraint)
@@ -139,7 +139,7 @@ class RecipeIngredient(Model):
         ]
 
     def __str__(self):
-        return 'Ингридиент в рецепте'
+        return f'{self.ingredient} в  {self.recipe}'
 
 
 class RecipeTag(Model):
