@@ -90,7 +90,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             recipe__purchases_user=request.user).values_list(
                 'ingredient__name',
                 'ingredient__measurement_unit',
-                'amount')
+                'amount',
+                named=True)
         for ingredient in ingredients:
             amount = ingredient.amount
             name = ingredient.ingredient.name

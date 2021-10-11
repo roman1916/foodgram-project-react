@@ -87,6 +87,7 @@ class Recipe(Model):
     )
     ingredients = ManyToManyField(
         Ingredient,
+        related_name='ingredients',
         through='RecipeIngredient'
     )
     cooking_time = PositiveIntegerField(
@@ -119,7 +120,7 @@ class RecipeIngredient(Model):
     )
     ingredient = ForeignKey(
         Ingredient,
-        on_delete=PROTECT,
+        on_delete=CASCADE,
         verbose_name='Ингридиент'
     )
     amount = PositiveIntegerField(
@@ -189,7 +190,7 @@ class ShoppingList(Model):
     user = ForeignKey(
         User,
         on_delete=CASCADE,
-        related_name='shopping_list',
+        related_name='purchases',
         verbose_name='Пользователь'
     )
     recipe = ForeignKey(
@@ -203,7 +204,7 @@ class ShoppingList(Model):
         constraints = [
             UniqueConstraint(
                 fields=['user', 'recipe'],
-                name='unique_recipe_in_user_shopping_list'
+                name='unique purchases user'
             )
         ]
         ordering = ('-id',)
