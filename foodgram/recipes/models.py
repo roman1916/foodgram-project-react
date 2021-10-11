@@ -194,6 +194,7 @@ class ShoppingList(Model):
     )
     recipe = ForeignKey(
         Recipe,
+        related_name='purchases',
         on_delete=CASCADE,
         verbose_name='Рецепт'
     )
