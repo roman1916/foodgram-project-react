@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from .filters import IngredientsFilter, RecipeFilter
 from .mixins import RetriveAndListViewSet
 from .models import (Favorite, Ingredient, Recipe,
-                     ShoppingList, Tag)
+                     ShoppingList, Tag, RecipeIngredient)
 from .pagination import CustomPageNumberPaginator
 from .permissions import IsAuthorOrAdmin
 from .serializers import (AddRecipeSerializer, FavouriteSerializer,
@@ -86,25 +86,29 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
-        user = request.user
-        recipes = Recipe.objects.filter(
-            in_favourites__user=user,
-            in_favourites__is_in_shopping_cart=True
-        )
-        ingredients = recipes.values(
-            'ingredients__name',
-            'ingredients__measurement_unit__name').order_by(
-            'ingredients__name').annotate(
-            ingredients_total=Sum('ingredient_amounts__amount')
-        )
-        shopping_list = {}
-        for item in ingredients:
-            title = item.get('ingredients__name')
-            count = str(item.get('ingredients_total')) + ' ' + item[
-                'ingredients__measurement_unit__name'
-            ]
-            shopping_list[title] = count
-        data = ''
-        for key, value in shopping_list.items():
-            data += f'{key} - {value}\n'
-        return HttpResponse(data, content_type='text/plain')
+        ingredients_dict = {}
+        ingredients = RecipeIngredient.objects.filter(
+            recipe__shopping_list__user=request.user).values_list(
+                'ingredient__name',
+                'ingredient__measurement_unit',
+                'amount',
+                named=True)
+        for ingredient in ingredients:
+            amount = ingredient.amount
+            name = ingredient.ingredient.name
+            measurement_unit = ingredient.ingredient.measurement_unit
+            if name not in ingredients_dict:
+                ingredients_dict[name] = {
+                    'measurement_unit': measurement_unit,
+                    'amount': amount
+                }
+            else:
+                ingredients_dict[name]['amount'] += amount
+        to_buy = []
+        for item in ingredients_dict:
+            to_buy.append(f'{item} - {ingredients_dict[item]["amount"]} '
+                          f'{ingredients_dict[item]["measurement_unit"]} \n')
+        file = 'to_buy.txt'
+        response = HttpResponse(to_buy, 'Content-Type: text/plain')
+        response['Content-Disposition'] = f'attachment; filename="{file}"'
+        return response
