@@ -106,7 +106,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         for item in ingredients_dict:
             to_buy.append(f'{item} - {ingredients_dict[item]["amount"]} '
                           f'{ingredients_dict[item]["measurement_unit"]} \n')
-
+        file = 'to_by.txt'
         response = HttpResponse(to_buy, 'Content-Type: text/plain')
-        response['Content-Disposition'] = f'attachment; filename="{to_buy.txt}"'
+        response['Content-Disposition'] = f'attachment; filename="{file}"'
         return response
