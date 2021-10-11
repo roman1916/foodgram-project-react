@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from .filters import IngredientsFilter, RecipeFilter
 from .mixins import RetriveAndListViewSet
 from .models import (Favorite, Ingredient, Recipe,
-                     ShoppingList, Tag, RecipeIngredient)
+                     ShoppingList, Tag)
 from .pagination import CustomPageNumberPaginator
 from .permissions import IsAuthorOrAdmin
 from .serializers import (AddRecipeSerializer, FavouriteSerializer,
