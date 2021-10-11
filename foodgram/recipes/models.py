@@ -4,6 +4,7 @@ from django.db.models import (CASCADE, PROTECT, CharField, ForeignKey,
                               ImageField, ManyToManyField, Model,
                               PositiveIntegerField, TextField,
                               UniqueConstraint)
+from django.db.models.fields import related
 
 User = get_user_model()
 
@@ -194,6 +195,7 @@ class ShoppingList(Model):
     )
     recipe = ForeignKey(
         Recipe,
+        related_name='shopping_list',
         on_delete=CASCADE,
         verbose_name='Рецепт'
     )
