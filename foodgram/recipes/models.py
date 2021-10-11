@@ -4,7 +4,6 @@ from django.db.models import (CASCADE, PROTECT, CharField, ForeignKey,
                               ImageField, ManyToManyField, Model,
                               PositiveIntegerField, TextField,
                               UniqueConstraint)
-from django.db.models.fields import related
 
 User = get_user_model()
 
