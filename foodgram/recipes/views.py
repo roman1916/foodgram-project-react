@@ -87,7 +87,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         ingredients_dict = {}
         ingredients = RecipeIngredient.objects.filter(
-            recipe__purchases_user=request.user).values_list(
+            shopping_list__user=request.user).values_list(
                 'ingredient__name',
                 'ingredient__measurement_unit',
                 'amount',
@@ -107,7 +107,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         for item in ingredients_dict:
             to_buy.append(f'{item} - {ingredients_dict[item]["amount"]} '
                           f'{ingredients_dict[item]["measurement_unit"]} \n')
-        file = 'to_by.txt'
+        file = 'to_buy.txt'
         response = HttpResponse(to_buy, 'Content-Type: text/plain')
         response['Content-Disposition'] = f'attachment; filename="{file}"'
         return response

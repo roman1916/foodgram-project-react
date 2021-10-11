@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
-from django.db.models import (CASCADE, CharField, ForeignKey,
+from django.db.models import (CASCADE, PROTECT, CharField, ForeignKey,
                               ImageField, ManyToManyField, Model,
                               PositiveIntegerField, TextField,
                               UniqueConstraint)
@@ -87,7 +87,6 @@ class Recipe(Model):
     )
     ingredients = ManyToManyField(
         Ingredient,
-        related_name='ingredients',
         through='RecipeIngredient'
     )
     cooking_time = PositiveIntegerField(
@@ -116,13 +115,11 @@ class Recipe(Model):
 class RecipeIngredient(Model):
     recipe = ForeignKey(
         Recipe,
-        on_delete=CASCADE,
-        related_name='recipes_list'
+        on_delete=CASCADE
     )
     ingredient = ForeignKey(
         Ingredient,
-        on_delete=CASCADE,
-        related_name='ingredients_list',
+        on_delete=PROTECT,
         verbose_name='Ингридиент'
     )
     amount = PositiveIntegerField(
@@ -133,15 +130,9 @@ class RecipeIngredient(Model):
     class Meta:
         verbose_name = 'Ингридиент'
         verbose_name_plural = 'Ингридиенты'
-        constraints = [
-            UniqueConstraint(
-                fields=['ingredient', 'recipe'],
-                name='unique_ingredients'
-            )
-        ]
 
     def __str__(self):
-        return f'{self.ingredient} в  {self.recipe}'
+        return 'Ингридиент в рецепте'
 
 
 class RecipeTag(Model):
@@ -192,12 +183,11 @@ class ShoppingList(Model):
     user = ForeignKey(
         User,
         on_delete=CASCADE,
-        related_name='purchases',
+        related_name='shopping_list',
         verbose_name='Пользователь'
     )
     recipe = ForeignKey(
         Recipe,
-        related_name='purchases',
         on_delete=CASCADE,
         verbose_name='Рецепт'
     )
@@ -206,7 +196,7 @@ class ShoppingList(Model):
         constraints = [
             UniqueConstraint(
                 fields=['user', 'recipe'],
-                name='unique purchases user'
+                name='unique_recipe_in_user_shopping_list'
             )
         ]
         ordering = ('-id',)
