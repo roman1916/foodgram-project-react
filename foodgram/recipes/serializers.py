@@ -111,10 +111,8 @@ class AddRecipeSerializer(ModelSerializer):
                 raise ValidationError('Ингридиенты должны быть уникальными')
             ingredient_list.append(ingredient)
             if int(ingredient_item['amount']) < 0:
-                raise ValidationError({
-                    'ingredients': ('Убедитесь, что значение количества '
-                                    'ингредиента больше 0')
-                })
+                raise ValidationError('Убедитесь, что значение количества '
+                                      'ингредиента больше 0')
         return data
 
     def validate_tags(self, data):
