@@ -5,9 +5,8 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework.serializers import (IntegerField, ModelSerializer,
                                         PrimaryKeyRelatedField, ReadOnlyField,
                                         SerializerMethodField, ValidationError)
-
-
 from users.serializers import CustomUserSerializer
+
 from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                      ShoppingList, Tag)
 
@@ -111,15 +110,13 @@ class AddRecipeSerializer(ModelSerializer):
                 raise ValidationError('Ингридиенты должны быть уникальными')
             ingredient_list.append(ingredient)
             if int(ingredient_item['amount']) < 0:
-                raise ValidationError('Убедитесь, что значение количества '
-                                      'ингредиента больше 0')
+                raise ValidationError({
+                    'ingredients': ('Убедитесь, что значение количества '
+                                    'ингредиента больше 0')
+                })
         return data
 
     def validate_tags(self, data):
-        tags = self.initial_data.get('tags')
-        tag = get_object_or_404(Tag, id=tags['id'])
-        if len(tag) == len(set(tag)):
-            raise ValidationError('Теги должны быть уникальными')
         if not data:
             raise ValidationError('Теги не могут быть пустыми!')
         return data
